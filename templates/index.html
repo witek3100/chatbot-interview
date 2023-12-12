@@ -161,8 +161,7 @@
             query = document.getElementById('usrinput').value
 
             $('#previous-query').text('');
-            $('#bot-response').text('');
-            document.getElementById("#dots").style.display = "block";
+            $('#bot-response').text('loading response ...');
 
             $.ajax({
                 url: "/",
@@ -171,7 +170,6 @@
                 success: function (response) {
                     $('#previous-query').text(response.query);
                     $('#bot-response').text(response.result);
-                    document.getElementById("#dots").style.display = "none";
                 }
             })
         }

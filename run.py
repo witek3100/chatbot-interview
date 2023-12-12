@@ -18,9 +18,9 @@ def get_response(query):
     docs = docsearch.similarity_search(query)
     print(docs)
     template = PromptTemplate.from_template(
-        "You are given a texts and a query. You need to answer the query on the basis of paragraph. If paragraph doesn't contain relevant information your answer should be \"This interview doesn't contain this information \" \n\n Paragraph:\n{info} \n Query:\n {query}"
+        "You are given a texts and a query. Texts are trasncriptions of youtube interview video. You need to answer the query on the basis of texts. Try to answer only based on these texts, if it's impossible, answer that: \"This interview doesn't contain this information \" \n\n Paragraph:\n{info} \n Query:\n {query}"
     )
-    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=0.5, openai_api_key=config['open_ai_api_key'])
+    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1, openai_api_key=config['open_ai_api_key'])
     chain = LLMChain(
         llm=llm,
         prompt=template,
