@@ -1,0 +1,8 @@
+{
+  "video_url": "https://www.youtube.com/watch?v=13CZPWmke6A",
+  "open_ai_api_key": "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",
+  "pinecone_api_key": "c079a1cd-1698-41b2-b457-74aa836db1aa",
+  "pinecone_enviroinment": "gcp-starter",
+  "azure_api_key": "263897f7802842edad6805a220405c63",
+  "azure_region": "westeurope"
+}
