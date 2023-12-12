@@ -8,7 +8,7 @@ def create_pinecone_index():
     with open('data/transcription.txt', 'r') as file:
         text = file.read()
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=0)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=0)
     texts = splitter.split_text(str(text))
 
     with open('config.json', 'r') as config:
