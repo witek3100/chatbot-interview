@@ -9,10 +9,10 @@ import time
 
 class Trancsript:
 
-    def __init__(self):
+    def __init__(self, audio_path='../data/audio', output='../data/transcription.txt'):
         self.speaker = 1
-        self.transcript_output = '../data/transcription.txt'
-        self.audio_path = '../data/audio'
+        self.transcript_output = output
+        self.audio_path = audio_path
         self.get_transcript()
 
     def get_audio(self, url):
@@ -56,6 +56,8 @@ class Trancsript:
                 self.speaker = spkr
             else:
                 text = f' {evt.result.text}'
+
+            print(text)
 
             file.write(text)
 
