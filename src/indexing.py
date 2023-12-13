@@ -15,12 +15,12 @@ def create_pinecone_index():
     splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=0)
     texts = splitter.split_text(str(text))
 
-    embeddings = OpenAIEmbeddings(openai_api_key=config['open_ai_api_key'])
+    embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
     pinecone.init(
-        api_key=config['pinecone_api_key'],
-        environment=config['pinecone_enviroinment']
+        api_key=os.environ['PINECONE_API_KEY'],
+        environment=os.environ['PINECONE_ENVIROINMENT']
     )
-    docsearch = Pinecone.from_texts([text for text in texts], embeddings, index_name=config['pinecone_index'])
+    docsearch = Pinecone.from_texts([text for text in texts], embeddings, index_name=os.environ['PINECONE_INDEX'])
 
     return docsearch
 
