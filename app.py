@@ -1,10 +1,10 @@
 import os
-
 from flask import Flask, render_template, request, jsonify
 from src.indexing import create_pinecone_index
-from langchain.prompts import PromptTemplate
+from langchain.prompts import ChatPromptTemplate, PromptTemplate, MessagesPlaceholder
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
+from langchain.memory import ConversationBufferMemory
 import json
 
 
@@ -15,18 +15,45 @@ with open('config.json') as config:
 
 def get_response(query):
     docs = docsearch.similarity_search(query)
-    template = PromptTemplate.from_template(
-        "You are given a texts and a query. Texts are trasncriptions of youtube interview video."
-        " You need to answer the query on the basis of texts. Try to answer only based on these texts, "
-        "if it's impossible, answer something like that: \"This interview doesn't contain this information \" \n\n Paragraph:\n{info} \n Query:\n {query}"
+
+    memory = ConversationBufferMemory(
+        memory_key="chat_history",
+        input_key="human_input"
     )
-    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1.5, openai_api_key=os.environ['OPENAI_API_KEY'])
+
+    prompt = PromptTemplate(
+        input_variables=[
+            'query',
+            'info',
+            'chat_history',
+            'human_input'
+        ],
+        template=(
+            """
+            "You are given a texts and a query. You need to answer the query on the basis of texts. Try to answer only based on these texts, "
+            "if it's impossible, answer something like that: \"This interview doesn't contain this information \" "
+            "Texts are transcripts form video interview video so you can thinks of terms video and interview interchangeably 
+            \n Texts:\n{info}
+            \n Query:\n{query}
+            \n Previous conversation: {chat_history}"
+            {human_input}
+                """
+        )
+    )
+
+    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1.3, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = LLMChain(
         llm=llm,
-        prompt=template,
+        prompt=prompt,
         verbose=True,
+        memory=memory
     )
-    response = chain.predict(query=query, info='\n'.join([doc.page_content for doc in docs]))
+
+    response = chain.predict(
+        query=query,
+        info='\n'.join([doc.page_content for doc in docs]),
+        human_input=query
+    )
 
     return response
 
