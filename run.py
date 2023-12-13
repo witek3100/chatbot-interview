@@ -1,17 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-import json
 from src.indexing import create_pinecone_index
-import openai
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
+import os
 
 
 app = Flask(__name__)
-
-with open('config.json') as config:
-    config = json.load(config)
-
 docsearch = create_pinecone_index()
 
 def get_response(query):
@@ -22,7 +17,7 @@ def get_response(query):
         " You need to answer the query on the basis of texts. Try to answer only based on these texts, "
         "if it's impossible, answer something like that: \"This interview doesn't contain this information \" \n\n Paragraph:\n{info} \n Query:\n {query}"
     )
-    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1.5, openai_api_key=config['open_ai_api_key'])
+    llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1.5, openai_api_key=os.environ['OPENAI_API_KEY'])
     chain = LLMChain(
         llm=llm,
         prompt=template,
