@@ -3,6 +3,7 @@ from src.indexing import create_pinecone_index
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
+from langchain.memory import ConversationBufferMemory
 import os
 
 
@@ -18,10 +19,12 @@ def get_response(query):
         "if it's impossible, answer something like that: \"This interview doesn't contain this information \" \n\n Paragraph:\n{info} \n Query:\n {query}"
     )
     llm = ChatOpenAI(model='gpt-3.5-turbo', temperature=1.5, openai_api_key=os.environ['OPENAI_API_KEY'])
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     chain = LLMChain(
         llm=llm,
         prompt=template,
-        verbose=True
+        verbose=True,
+        memory=memory
     )
     response = chain.predict(query=query, info='\n'.join([doc.page_content for doc in docs]))
 
