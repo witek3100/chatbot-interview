@@ -12,7 +12,7 @@ def create_pinecone_index():
     with open('config.json') as config:
         config = json.load(config)
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=0)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     texts = splitter.split_text(str(text))
 
     embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
